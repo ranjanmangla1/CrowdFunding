@@ -11,8 +11,6 @@ const App = () => {
         <Sidebar />
       </div>
 
-      <h1 className='font-xl font-bold'>TEST</h1>
-
       <div className='flex-1 max-sm:w-full max-w:[1280px] ,x-auto sm:pr-5'>
        < Navbar />
 
