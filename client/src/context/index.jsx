@@ -1,8 +1,9 @@
 // this is the file where all the web3 logic of this project is stored
 // this context will be wrapped with all the pages
 import React, {useContext, createContext } from 'react';
-import { useAddress, useContract, useMetamask, useContractWrite } from '@thirdweb-dev/react';
+import { useAddress, useContract, useContractRead, useMetamask, useContractWrite } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
+import { parse } from 'dotenv';
 
 const StateContext = createContext();
 
@@ -34,23 +35,68 @@ export const StateContextProvider = ( { children } ) => {
       }
     
     const getCampaigns = async () => {
-        const campaigns = await contract.call('getCampaigns');
-        
-        const parsedCampaigns = campaigns.map((campaign, i) => ({
+        // const campaigns = await contract.call('getCampaigns');
 
+        const data = await contract.call("getCampaigns");
+        
+        console.log(data);
+        
+        const campaigns = data.map((campaign, i) => ({
             owner: campaign.owner,
             title: campaign.title,
             description: campaign.description,
-            target: ethers.utils.formatEther(target.toString()),
+            target: ethers.utils.formatEther(campaign.target.toString()),
             deadline: campaign.deadline.toNumber(),
-            amountCollected: ethers.utils.formatEther(campaign.amountCollected.toString()),
+            amountCollected: ethers.utils.formatEther(
+              campaign.amountCollected.toString()
+            ),
             image: campaign.image,
-            pId: 1
-        }))
+            pId: i,
+          }));
 
-        console.log(parsedCampaigns);
-    }  
-      return(
+        return campaigns;
+    }
+
+    const getDonations = async (pId) => {
+      const donations = await contract.call('getDonators', pId);
+      
+      const numberOfDonations = donations[0].length;
+
+      const parsedDonations = [];
+
+      for ( let i = 0; i < numberOfDonations; i++) {
+        parsedDonations.push({
+          donator: donations.push[0][i],
+          donation: ethers.utils.formatEther(donations[1][i].toString())
+        })
+      }
+
+      console.log(parsedDonations);
+
+      return parsedDonations;
+    }
+
+    const getUserCampaigns = async () => {
+      // const campaigns = await contract.call('getCampaigns');
+
+      const allCampaigns = await getCampaigns();
+      
+      // console.log(data);
+      
+      const userCampaigns = allCampaigns.filter((campaign) => campaign.owner == address);
+
+      return userCampaigns;
+    }
+
+    const donate = async (pId, amount) => {
+      const data = await contract.call('donateToCampaign', pId, { value: ethers.utils.parseEther(amount)});
+
+      console.log("donate data: " ,data);
+  
+      return data;
+    }
+
+    return(
         <StateContext.Provider 
             value={{
                 address,
@@ -58,6 +104,9 @@ export const StateContextProvider = ( { children } ) => {
                 connect,
                 createCampaign: publishCampaign,
                 getCampaigns,
+                getUserCampaigns,
+                donate,
+                getDonations
             }}
         >
             {children}
