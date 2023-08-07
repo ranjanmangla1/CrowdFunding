@@ -1,14 +1,17 @@
 // this is the file where all the web3 logic of this project is stored
 // this context will be wrapped with all the pages
 import React, {useContext, createContext } from 'react';
-import { useAddress, useContract, useContractRead, useMetamask, useContractWrite } from '@thirdweb-dev/react';
+
+import { useAddress, useContract, useMetamask, useContractWrite } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
-import { parse } from 'dotenv';
+// import { parse } from 'dotenv';
+
+import { EditionMetadataWithOwnerOutputSchema } from '@thirdweb-dev/sdk';
 
 const StateContext = createContext();
 
 export const StateContextProvider = ( { children } ) => {
-    const { contract } = useContract('0x503315bD39651cfc9DF2623A6C680e6809B79C71');
+    const { contract } = useContract('0x559BBC8f7eF80b73927a129863a3585998e2cf82');
 
     const { mutateAsync : createCampaign } = useContractWrite(contract, 'createCampaign');
 
@@ -58,7 +61,7 @@ export const StateContextProvider = ( { children } ) => {
     }
 
     const getDonations = async (pId) => {
-      const donations = await contract.call('getDonators', pId);
+      const donations = await contract.call('getDonators', [pId]);
       
       const numberOfDonations = donations[0].length;
 
@@ -89,7 +92,7 @@ export const StateContextProvider = ( { children } ) => {
     }
 
     const donate = async (pId, amount) => {
-      const data = await contract.call('donateToCampaign', pId, { value: ethers.utils.parseEther(amount)});
+      const data = await contract.call('donateToCampaign', [pId], { value: ethers.utils.parseEther(amount)});
 
       console.log("donate data: " ,data);
   

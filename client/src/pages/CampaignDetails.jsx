@@ -24,13 +24,6 @@ const CampaignDetails = () => {
 
   const remainingDays = daysLeft(state.deadline);
 
-  const handleDonate = async (amount) => {
-    setIsLoading(true);
-    await donate(state.pId, amount);
-    navigate('/');
-    setIsLoading(false);
-  }
-
   const fetchDonators = async () => {
     const data = await getDonations(state.pId);
     console.log(data);
@@ -41,6 +34,13 @@ const CampaignDetails = () => {
     if(contract) fetchDonators();
   } ,[contract, address])
   
+
+  const handleDonate = async() => {
+    setIsLoading(true);
+    await donate(state.pId, amount);
+    navigate('/');
+    setIsLoading(false);
+  }
   return (
    <div>
     {isLoading && <Loader /> }
@@ -54,7 +54,7 @@ const CampaignDetails = () => {
         </div>
       </div>
 
-       <div className='flex md:w-[150px] flex-wrap justify-between gap-[30px]'>
+       <div className='flex md:w-[150px] w-full flex-wrap justify-between gap-[30px]'>
          <CountBox title="Days Left" value={remainingDays} />
          <CountBox title={`Raised of ${state.target}`} value={state.amountCollected} />
          <CountBox title="Total Backers" value={donators.length} />
@@ -66,11 +66,11 @@ const CampaignDetails = () => {
         <div>
           <h4 className='font-epilogue font-semibold text-[18px] text-white p-3 uppercase'>Creator</h4>
           <div className='mt-[20px] flex flex-row items-center flex-wrap gap-[14px]'>
-            <div className='w-[52px] h-[52px] flex items-center justify-center rounded-full bggg-[#2c2f32] cursor-pointer'>
-              <img src={thirdweb} alt="user" className='w-[605] h-[60%] object-contain' />
+            <div className='w-[52px] h-[52px] flex items-center justify-center rounded-full bg-[#2c2f32] cursor-pointer'>
+              <img src={thirdweb} alt="user" className='w-[60%] h-[60%] object-contain' />
             </div>
             <div>
-              <h4 className='font-epilogue font-semibold text-[14px] text-white break-all'>{state.owner}</h4>
+              <h4 className='font-epilogue font-semibold text-[14px] text-white break-ll'>{state.owner}</h4>
               <p className='mt-[4px] font-epilogue font-normal text-[12px] text-[#808191]'>10 Campaigns</p>
             </div>
         </div>
@@ -80,7 +80,7 @@ const CampaignDetails = () => {
         <div>
           <h4 className='font-epilogue font-semibold text-[18px] text-white uppercase'>Story</h4>
           <div className='mt-[20px]'>
-            <p className='font-epilogue font-normal text-[16px] text-[#808191] leading[26px] text-justify'>{state.description}</p>
+            <p className='font-epilogue font-normal text-[16px] text-[#808191] leading-[26px] text-justify'>{state.description}</p>
           </div>
         </div>
 
@@ -112,7 +112,7 @@ const CampaignDetails = () => {
                 type='number' 
                 placeholder='Eth 0.1'
                 step='0.01'
-                className='w-full py-[10px] sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[18px] leading-[30px] palceholder:text-[#4b5264] rounded-[10px] number:bg-[#000000] rounded-full'
+                className='w-full py-[10px] sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[18px] leading-[30px] palceholder:text-[#4b5264] rounded-[10px]'
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
